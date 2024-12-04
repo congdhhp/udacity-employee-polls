@@ -1,26 +1,79 @@
-var {_saveQuestion, _saveQuestionAnswer} = require('../_DATA')
-
+var { _saveQuestion, _saveQuestionAnswer } = require('../_DATA');
 
 describe('_saveQuestion', () => {
-    test('Success save data', async() => {
-        var result = await _saveQuestion({author: 'sarahedo',optionOneText: 'opt1', optionTwoText: 'opt2' });
-        expect(result.author).toEqual('sarahedo');
-        expect(result.optionOne.text).toEqual('opt1');
-        expect(result.optionTwo.text).toEqual('opt2');
+    const validQuestion = {
+        author: 'sarahedo',
+        optionOneText: 'opt1',
+        optionTwoText: 'opt2'
+    };
+
+    test('should successfully save a question with valid data', async () => {
+        const result = await _saveQuestion(validQuestion);
+
+        expect(result.author).toEqual(validQuestion.author);
+        expect(result.optionOne.text).toEqual(validQuestion.optionOneText);
+        expect(result.optionTwo.text).toEqual(validQuestion.optionTwoText);
     });
 
-    test('Fail to save data', async() => {
-        await expect(_saveQuestion({author: 'sarahedo', optionTwoText: 'opt2' })).rejects.toEqual('Please provide optionOneText, optionTwoText, and author')
+    test('should throw an error when missing required fields', async () => {
+        const invalidQuestion = { author: 'sarahedo', optionTwoText: 'opt2' };
+
+        await expect(_saveQuestion(invalidQuestion)).rejects.toEqual(
+            'Please provide optionOneText, optionTwoText, and author'
+        );
     });
-})
+
+    test('should throw an error when author is missing', async () => {
+        const invalidQuestion = { optionOneText: 'opt1', optionTwoText: 'opt2' };
+
+        await expect(_saveQuestion(invalidQuestion)).rejects.toEqual(
+            'Please provide optionOneText, optionTwoText, and author'
+        );
+    });
+
+    test('should throw an error when optionOneText is missing', async () => {
+        const invalidQuestion = { author: 'sarahedo', optionTwoText: 'opt2' };
+
+        await expect(_saveQuestion(invalidQuestion)).rejects.toEqual(
+            'Please provide optionOneText, optionTwoText, and author'
+        );
+    });
+});
 
 describe('_saveQuestionAnswer', () => {
-    test('Success save data', async() => {
-        var result = await _saveQuestionAnswer({authedUser: 'mtsamis', qid: "xj352vofupe1dqz9emx13r", answer: "optionTwo" });
+    const validAnswer = {
+        authedUser: 'mtsamis',
+        qid: 'xj352vofupe1dqz9emx13r',
+        answer: 'optionTwo'
+    };
+
+    test('should successfully save an answer with valid data', async () => {
+        const result = await _saveQuestionAnswer(validAnswer);
+
         expect(result).toEqual(true);
     });
 
-    test('Fail to save data', async() => {
-        await expect(_saveQuestionAnswer({authedUser: 'mtsamis', qid: "xj352vofupe1dqz9emx13r" })).rejects.toEqual('Please provide authedUser, qid, and answer')
+    test('should throw an error when missing required fields', async () => {
+        const invalidAnswer = { authedUser: 'mtsamis', qid: 'xj352vofupe1dqz9emx13r' };
+
+        await expect(_saveQuestionAnswer(invalidAnswer)).rejects.toEqual(
+            'Please provide authedUser, qid, and answer'
+        );
     });
-})
+
+    test('should throw an error when authedUser is missing', async () => {
+        const invalidAnswer = { qid: 'xj352vofupe1dqz9emx13r', answer: 'optionTwo' };
+
+        await expect(_saveQuestionAnswer(invalidAnswer)).rejects.toEqual(
+            'Please provide authedUser, qid, and answer'
+        );
+    });
+
+    test('should throw an error when answer is missing', async () => {
+        const invalidAnswer = { authedUser: 'mtsamis', qid: 'xj352vofupe1dqz9emx13r' };
+
+        await expect(_saveQuestionAnswer(invalidAnswer)).rejects.toEqual(
+            'Please provide authedUser, qid, and answer'
+        );
+    });
+});
